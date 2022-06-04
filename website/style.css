@@ -1,0 +1,23 @@
+body {
+    background-color: rgb(51, 45, 45);
+    color: white;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.fix_top {
+    position: fixed; 
+    top: 0;
+}
+
+#main_div {
+    margin-top: 60px;
+}
