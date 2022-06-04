@@ -1,6 +1,7 @@
 package org.cs172;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
@@ -9,52 +10,29 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Indexer {
-    IndexWriter indexWriter = null;
-
-    private void parseJSON() {
-        Gson gson = new Gson();
-        BufferedReader bufferedReader;
-        try {
-            bufferedReader = new BufferedReader(new FileReader("tweets_new.json"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-            String currentData = bufferedReader.readLine();
-            while (currentData != null) {
-                System.out.println(currentData);
-                currentData = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     void buildIndex() {
-        Directory indexDirectory;
         try {
-            indexDirectory = FSDirectory.open(Path.of("indexes"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            Directory indexDirectory = FSDirectory.open(Path.of("indexes"));
+            Analyzer standardAnalyzer = new StandardAnalyzer();
 
-        Analyzer standardAnalyzer = new StandardAnalyzer();
-        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(standardAnalyzer);
-        indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(standardAnalyzer);
+            indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
+            IndexWriter indexWriter = new IndexWriter(indexDirectory, indexWriterConfig);
 
-        try {
-            indexWriter = new IndexWriter(indexDirectory, indexWriterConfig);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+            InputStream inputStream = Files.newInputStream(Path.of("tweets_new.json"));
+            JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));
 
-        parseJSON();
+            jsonReader.beginArray();
+            while (jsonReader.hasNext()) {
+                Tweet tweet = new Gson().fromJson(jsonReader, Tweet.class);
+                System.out.println(tweet.data.text);
+            }
 
-        try {
+            jsonReader.endArray();
             indexWriter.commit();
             indexWriter.close();
         } catch (IOException e) {
