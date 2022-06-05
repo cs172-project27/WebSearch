@@ -20,50 +20,8 @@ import java.nio.file.Path;
 @CrossOrigin("*")
 public class Controller {
     @GetMapping("/test")
-    public void test(@RequestParam(required=false,defaultValue="") String q1) {
+    public String test(@RequestParam(required=false,defaultValue="") String q1) {
         System.out.println(q1);
-
-//        // directory where your index is stored
-//        File path = new File("C:/Users/mayur/Desktop/Coding/CS172/WebSearch/backend/tweet_index");
-//
-//        Directory index = null;
-//        try {
-//            index = FSDirectory.open(path.toPath());
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        IndexReader reader = null;
-//        try {
-//            reader = DirectoryReader.open(index);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        IndexSearcher searcher = new IndexSearcher(reader);
-//
-//        Term t = new Term("author_id", "car");
-//
-//        // Get the top 10 docs
-//        Query query = new TermQuery(t);
-//        TopDocs tops= null;
-//        try {
-//            tops = searcher.search(query, 10);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        ScoreDoc[] scoreDoc = tops.scoreDocs;
-//        System.out.println(scoreDoc.length);
-//        for (ScoreDoc score : scoreDoc){
-//            System.out.println("DOC " + score.doc + " SCORE " + score.score);
-//        }
-//
-//        // Get the frequency of the term
-//        int freq = 0;
-//        try {
-//            freq = reader.docFreq(t);
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        System.out.println("FREQ " + freq);
 
         // 2. query
         String querystr = "lucene";
@@ -99,5 +57,7 @@ public class Controller {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        // print to local host page
+        return Integer.toString(hits.length);
     }
 }
