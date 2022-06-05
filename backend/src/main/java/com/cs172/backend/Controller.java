@@ -16,10 +16,30 @@ import java.io.IOException;
 import java.nio.file.Path;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/")
 @CrossOrigin("*")
 public class Controller {
-    @GetMapping("/test")
+    @GetMapping("/")
+    public String homePage() {
+        return """
+                <!DOCTYPE html>
+                <html>
+                    <head>
+                        <title> Web Search </title>
+                        <link rel="stylesheet" type="text/css" href="style.css">
+                    </head>
+                    <body>
+                        <div class="row fix_top">
+                            <input id="searchBar" type="search" placeholder="Search...">
+                            <button id="pause_button" onclick="getResults()"> Get Results </button>
+                        </div>
+                        <div id="main_div">
+                        </div>
+                        <script src="main.js"></script>
+                    </body>
+                </html>""";
+    }
+    @GetMapping("/api/test")
     public String test(@RequestParam(required=false,defaultValue="") String q1) {
         System.out.println(q1);
 
