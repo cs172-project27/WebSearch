@@ -20,6 +20,7 @@ public class Indexer {
         try {
             Directory indexDirectory = FSDirectory.open(Path.of("tweet_index"));
             IndexWriter indexWriter = new IndexWriter(indexDirectory, new IndexWriterConfig(new StandardAnalyzer()));
+            indexWriter.deleteAll();
 
             InputStream inputStream = Files.newInputStream(Path.of("tweets_new.json"));
             JsonReader jsonReader = new JsonReader(new InputStreamReader(inputStream));
@@ -29,30 +30,25 @@ public class Indexer {
                 Tweet tweet = new Gson().fromJson(jsonReader, Tweet.class);
                 Document document = new Document();
 
-                document.add(new StringField("author_id", tweet.data.author_id, Field.Store.YES));
-                document.add(new StringField("id", tweet.data.id, Field.Store.YES));
                 document.add(new TextField("text", tweet.data.text, Field.Store.YES));
 
-                document.add(new StringField("name", tweet.includes.users.get(0).name, Field.Store.YES));
-                document.add(new StringField("name", tweet.includes.users.get(0).username, Field.Store.YES));
-                document.add(new StringField("user_id", tweet.includes.users.get(0).id, Field.Store.YES));
-
                 Instant created_at = Instant.parse(tweet.data.created_at);
-                document.add(new StringField("time_created", created_at.atZone(ZoneOffset.UTC).toLocalTime().toString(), Field.Store.YES));
-                document.add(new StringField("day_created", created_at.atZone(ZoneOffset.UTC).getDayOfWeek().toString(), Field.Store.YES));
-                document.add(new StringField("month_created", created_at.atZone(ZoneOffset.UTC).getMonth().toString(), Field.Store.YES));
-                document.add(new NumericDocValuesField("year_created", created_at.atZone(ZoneOffset.UTC).getYear()));
+                document.add(new StringField("created_at", created_at.toString(), Field.Store.YES));
 
                 for (int i = 0; i < tweet.urls.size(); i++) {
                     document.add(new StringField("url" + (i + ""), tweet.urls.get(i), Field.Store.YES));
                 }
 
-                for (int i = 0; i < tweet.urls.size(); i++) {
-                    document.add(new StringField("url" + (i + ""), tweet.urls.get(i), Field.Store.YES));
+                for (int i = 0; i < tweet.includes.users.size(); i++) {
+                    document.add(new StringField("username" + (i + ""), tweet.includes.users.get(i).username, Field.Store.YES));
+                    document.add(new StringField("name" + (i + ""), tweet.includes.users.get(i).name, Field.Store.YES));
                 }
 
                 indexWriter.addDocument(document);
             }
+
+            indexWriter.commit();
+            indexWriter.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
