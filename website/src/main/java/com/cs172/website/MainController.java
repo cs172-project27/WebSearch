@@ -31,7 +31,7 @@ public class MainController {
         }
 
         // search
-        int hitsPerPage = 10;
+        int hitsPerPage = 10000;
         IndexReader reader = null;
         try {
             reader = DirectoryReader.open(FSDirectory.open(Path.of("tweet_index")));
