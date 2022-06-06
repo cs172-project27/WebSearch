@@ -41,10 +41,12 @@ public class MainController {
             TopDocs docs = searcher.search(q, hitsPerPage);
 
             ScoreDoc[] hits = docs.scoreDocs;
-            ArrayList<String> results = new ArrayList<>();
+            ArrayList<SearchResult> searchResults = new ArrayList<>();
             for (ScoreDoc hit: hits) {
                 Document document = searcher.doc(hit.doc);
-                results.add(document.get("text"));
+                String text = document.get("text");
+                String username = document.get("username0");
+                searchResults.add(new SearchResult(username, text));
             }
 
             reader.close();
@@ -52,7 +54,7 @@ public class MainController {
             // print to local host page @ http://localhost:8080/
             model.addAttribute("query", query);
             model.addAttribute("hitCount", hits.length);
-            model.addAttribute("results", results);
+            model.addAttribute("results", searchResults);
             return "results";
         } catch (IOException e) {
             throw new RuntimeException(e);
