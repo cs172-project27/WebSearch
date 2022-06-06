@@ -23,13 +23,12 @@ public class MainController {
     @GetMapping("/results")
     public String results(@RequestParam(name="query", required=false, defaultValue="World") String query, Model model) {
         // 2. query
-        String querystr = query;
 
         // the "title" arg specifies the default field to use
         // when no field is explicitly specified in the query.
         Query q = null;
         try {
-            q = new QueryParser("title", new StandardAnalyzer()).parse(querystr);
+            q = new QueryParser("text", new StandardAnalyzer()).parse(query);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
