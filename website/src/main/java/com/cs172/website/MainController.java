@@ -38,7 +38,7 @@ public class MainController {
         int hitsPerPage = 10;
         IndexReader reader = null;
         try {
-            reader = DirectoryReader.open(FSDirectory.open(Path.of("C:/Users/mayur/Desktop/Coding/CS172/WebSearch/backend/tweet_index")));
+            reader = DirectoryReader.open(FSDirectory.open(Path.of("tweet_index")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -58,7 +58,8 @@ public class MainController {
         }
         // print to local host page
         model.addAttribute("query", query);
+        model.addAttribute("hitCount", hits.length);
         return "results";
-        }
-
     }
+
+}
