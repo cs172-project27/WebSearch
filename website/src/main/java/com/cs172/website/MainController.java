@@ -22,10 +22,7 @@ import java.nio.file.Path;
 public class MainController {
     @GetMapping("/results")
     public String results(@RequestParam(name="query", required=false, defaultValue="World") String query, Model model) {
-        // 2. query
-
-        // the "title" arg specifies the default field to use
-        // when no field is explicitly specified in the query.
+        // query
         Query q = null;
         try {
             q = new QueryParser("text", new StandardAnalyzer()).parse(query);
@@ -33,7 +30,7 @@ public class MainController {
             throw new RuntimeException(e);
         }
 
-        // 3. search
+        // search
         int hitsPerPage = 10;
         IndexReader reader = null;
         try {
@@ -55,10 +52,9 @@ public class MainController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        // print to local host page
+        // print to local host page @ http://localhost:8080/
         model.addAttribute("query", query);
         model.addAttribute("hitCount", hits.length);
         return "results";
     }
-
 }
